@@ -38,6 +38,7 @@ impl Engine {
                 let res = is_executable(&path, command);
                 if res == true {
                     found = true;
+                    break;
                 }
             }
             if found == false {

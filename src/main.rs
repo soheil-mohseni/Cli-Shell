@@ -1,15 +1,14 @@
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::sync::OnceLock;
 use std::{collections::HashMap, io::stdin};
 
 struct Engine {
     handlers: HashMap<&'static str, fn(&str)>,
 }
 
-// #[derive(Hash, Eq, PartialEq)]
-// enum Engine_method {
-//     echo,
-// }
+
+static ENGINE: OnceLock<Engine> = OnceLock::new();
 
 impl Engine {
     fn new() -> Self {
@@ -17,13 +16,21 @@ impl Engine {
 
         handlers.insert("echo", Engine::echo);
         handlers.insert("exit", Engine::exit);
+        handlers.insert("type", Engine::type_command);
 
         Self { handlers }
     }
     fn echo(command: &str) {
         println!("{}", command);
     }
-
+    fn type_command(command: &str) {
+        let eng = ENGINE.get().unwrap();
+        if let Some(_) = eng.handlers.get(command) {
+            println!("{} is a shell builtin", command);
+        } else {
+            eprintln!("{}: not found", command);
+        }
+    }
     fn exit(_: &str) {
         std::process::exit(0);
     }
@@ -37,7 +44,10 @@ impl Engine {
 }
 
 fn main() {
-    let engine_instance = Engine::new();
+    // ENGINE.set(engine_instance).unwrap();
+
+    let engine_instance = ENGINE.get_or_init(|| Engine::new());
+
     loop {
         print!("$ ");
         io::stdout().flush().unwrap();

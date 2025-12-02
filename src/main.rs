@@ -31,7 +31,7 @@ impl Engine {
         if let Some(handler) = self.handlers.get(cmd) {
             handler(command_value);
         } else {
-            eprintln!("{} {}: command not found", cmd, command_value);
+            eprintln!("{} {}: command not found", cmd, command_value.trim());
         }
     }
 }

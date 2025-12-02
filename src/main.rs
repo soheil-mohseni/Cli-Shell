@@ -82,7 +82,7 @@ fn is_executable(path: &str, exec_name: &str) -> bool {
     if let Ok(meta) = fs::metadata(&full_path) {
         let mode = meta.permissions().mode();
         if mode & 0o100 != 0 {
-            println!("{exec_name} is {path}{exec_name}");
+            println!("{exec_name} is {path}/{exec_name}");
             return true;
         }
     }

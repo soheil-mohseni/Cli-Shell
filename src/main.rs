@@ -1,12 +1,13 @@
+use std::fs;
 #[allow(unused_imports)]
 use std::io::{self, Write};
+use std::path::Path;
 use std::sync::OnceLock;
 use std::{collections::HashMap, io::stdin};
 
 struct Engine {
     handlers: HashMap<&'static str, fn(&str)>,
 }
-
 
 static ENGINE: OnceLock<Engine> = OnceLock::new();
 
@@ -28,9 +29,13 @@ impl Engine {
         if let Some(_) = eng.handlers.get(command) {
             println!("{} is a shell builtin", command);
         } else {
-            eprintln!("{}: not found", command);
+            let res = is_executable("/usr/bin/", command);
+            if res == false {
+                eprintln!("{}: not found", command);
+            }
         }
     }
+
     fn exit(_: &str) {
         std::process::exit(0);
     }
@@ -58,4 +63,17 @@ fn main() {
         let command_value: &str = command_input.next().unwrap_or("");
         engine_instance.dispatch(command, command_value);
     }
+}
+
+fn is_executable(path: &str, exec_name: &str) -> bool {
+    use std::os::unix::fs::PermissionsExt;
+    let full_path = Path::new(path).join(exec_name);
+    if let Ok(meta) = fs::metadata(&full_path) {
+        let mode = meta.permissions().mode();
+        if mode & 0o100 != 0 {
+            println!("{exec_name} is /usr/bin/{exec_name}");
+            return true;
+        }
+    }
+    return false;
 }

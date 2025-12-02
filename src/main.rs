@@ -1,3 +1,4 @@
+use std::env;
 use std::fs;
 #[allow(unused_imports)]
 use std::io::{self, Write};
@@ -29,8 +30,17 @@ impl Engine {
         if let Some(_) = eng.handlers.get(command) {
             println!("{} is a shell builtin", command);
         } else {
-            let res = is_executable("/usr/bin/", command);
-            if res == false {
+            let path_var = env::var("PATH").unwrap();
+            let path_list = path_var.split(":");
+            let mut found = false;
+            for path in path_list {
+                // println!("{}zzzzzzzzzzzzzzz", path);
+                let res = is_executable(&path, command);
+                if res == true {
+                    found = true;
+                }
+            }
+            if found == false {
                 eprintln!("{}: not found", command);
             }
         }

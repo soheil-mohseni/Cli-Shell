@@ -71,6 +71,7 @@ fn main() {
     }
 }
 
+
 fn executable_path(exec_name: &str) -> Result<String, &str> {
     use std::os::unix::fs::PermissionsExt;
     let path_var = env::var("PATH").unwrap();

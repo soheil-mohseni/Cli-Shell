@@ -30,19 +30,14 @@ impl Engine {
         if let Some(_) = eng.handlers.get(command) {
             println!("{} is a shell builtin", command);
         } else {
-            let path_var = env::var("PATH").unwrap();
-            let path_list = path_var.split(":");
-            let mut found = false;
-            for path in path_list {
-                // println!("{}zzzzzzzzzzzzzzz", path);
-                let res = is_executable(&path, command);
-                if res == true {
-                    found = true;
-                    break;
+            let res = executable_path(command);
+            match res {
+                Ok(response) => {
+                    println!("{command} is {response}");
                 }
-            }
-            if found == false {
-                eprintln!("{}: not found", command);
+                Err(err) => {
+                    eprintln!("{}: not found", command);
+                }
             }
         }
     }
@@ -76,15 +71,24 @@ fn main() {
     }
 }
 
-fn is_executable(path: &str, exec_name: &str) -> bool {
+fn executable_path(exec_name: &str) -> Result<String, &str> {
     use std::os::unix::fs::PermissionsExt;
-    let full_path = Path::new(path).join(exec_name);
-    if let Ok(meta) = fs::metadata(&full_path) {
-        let mode = meta.permissions().mode();
-        if mode & 0o100 != 0 {
-            println!("{exec_name} is {path}/{exec_name}");
-            return true;
+    let path_var = env::var("PATH").unwrap();
+    let path_list = path_var.split(":");
+    let mut found = false;
+    let mut last_path = "";
+    for path in path_list {
+        let full_path = Path::new(path).join(exec_name);
+        if let Ok(meta) = fs::metadata(&full_path) {
+            let mode = meta.permissions().mode();
+            if mode & 0o100 != 0 {
+                found = true;
+                last_path = path;
+            }
         }
     }
-    return false;
+    if found == true {
+        return Ok(format!("{}/{}", last_path, exec_name));
+    }
+    return Err("not found");
 }

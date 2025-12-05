@@ -3,6 +3,7 @@ use std::fs;
 #[allow(unused_imports)]
 use std::io::{self, Write};
 use std::path::Path;
+use std::process::Command;
 use std::sync::OnceLock;
 use std::{collections::HashMap, io::stdin};
 
@@ -49,7 +50,7 @@ impl Engine {
         if let Some(handler) = self.handlers.get(cmd) {
             handler(command_value);
         } else {
-            eprintln!("{}: command not found", cmd);
+            run_exec(cmd, command_value);
         }
     }
 }
@@ -71,6 +72,22 @@ fn main() {
     }
 }
 
+fn run_exec(cmd: &str, command_value: &str) {
+    let executable_path = executable_path(cmd);
+    match executable_path {
+        Ok(path) => {
+            let args_list: Vec<&str> = command_value.trim().split_whitespace().collect();
+            Command::new(cmd).args(&args_list);
+            println!(
+                "Program was passed {} args (including program name)",
+                args_list.len() + 1
+            );
+        }
+        Err(err) => {
+            eprintln!("{}: command not found", cmd);
+        }
+    }
+}
 
 fn executable_path(exec_name: &str) -> Result<String, &str> {
     use std::os::unix::fs::PermissionsExt;

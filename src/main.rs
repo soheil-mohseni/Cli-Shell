@@ -79,9 +79,15 @@ fn run_exec(cmd: &str, command_value: &str) {
             let args_list: Vec<&str> = command_value.trim().split_whitespace().collect();
             Command::new(cmd).args(&args_list);
             println!(
-                "Program was passed {} args (including program name).",
-                args_list.len() + 1
+                "Program was passed {} args (including program name).\nArg #0 (program name): {}",
+                args_list.len() + 1,
+                cmd
             );
+            let mut  counter = 1;
+            for arg  in args_list {
+                println!("Arg #{counter}: {arg}",);
+                counter+=1;
+            }
         }
         Err(err) => {
             eprintln!("{}: command not found", cmd);

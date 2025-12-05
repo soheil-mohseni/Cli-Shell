@@ -20,6 +20,7 @@ impl Engine {
         handlers.insert("echo", Engine::echo);
         handlers.insert("exit", Engine::exit);
         handlers.insert("type", Engine::type_command);
+        handlers.insert("pwd", Engine::pwd);
 
         Self { handlers }
     }
@@ -46,6 +47,9 @@ impl Engine {
     fn exit(_: &str) {
         std::process::exit(0);
     }
+    fn pwd(_: &str) {
+        pwd_command();
+    }
     fn dispatch(&self, cmd: &str, command_value: &str) {
         if let Some(handler) = self.handlers.get(cmd) {
             handler(command_value);
@@ -71,7 +75,6 @@ fn main() {
         engine_instance.dispatch(command, command_value);
     }
 }
-
 
 fn run_exec(cmd: &str, command_value: &str) {
     let executable_path = executable_path(cmd);
@@ -108,4 +111,9 @@ fn executable_path(exec_name: &str) -> Result<String, &str> {
         return Ok(format!("{}/{}", last_path, exec_name));
     }
     return Err("not found");
+}
+
+fn pwd_command() {
+    let pwd_res = env::current_dir().unwrap();
+    println!("{}", pwd_res.display());
 }

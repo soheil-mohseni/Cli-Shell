@@ -79,7 +79,7 @@ fn run_exec(cmd: &str, command_value: &str) {
             let args_list: Vec<&str> = command_value.trim().split_whitespace().collect();
             Command::new(cmd).args(&args_list);
             println!(
-                "Program was passed {} args (including program name)",
+                "Program was passed {} args (including program name).",
                 args_list.len() + 1
             );
         }

@@ -21,6 +21,7 @@ impl Engine {
         handlers.insert("exit", Engine::exit);
         handlers.insert("type", Engine::type_command);
         handlers.insert("pwd", Engine::pwd);
+        handlers.insert("cd", Engine::cd);
 
         Self { handlers }
     }
@@ -49,6 +50,9 @@ impl Engine {
     }
     fn pwd(_: &str) {
         pwd_command();
+    }
+    fn cd(command_value: &str) {
+        cd_command(command_value);
     }
     fn dispatch(&self, cmd: &str, command_value: &str) {
         if let Some(handler) = self.handlers.get(cmd) {
@@ -116,4 +120,11 @@ fn executable_path(exec_name: &str) -> Result<String, &str> {
 fn pwd_command() {
     let pwd_res = env::current_dir().unwrap();
     println!("{}", pwd_res.display());
+}
+
+fn cd_command(command_value: &str) {
+    let path = Path::new(command_value);
+    if let Err(error) = env::set_current_dir(command_value) {
+        println!("ERROR: {}", error);
+    }
 }

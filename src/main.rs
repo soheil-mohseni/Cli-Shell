@@ -123,8 +123,23 @@ fn pwd_command() {
 }
 
 fn cd_command(command_value: &str) {
-    let path = Path::new(command_value);
-    if let Err(error) = env::set_current_dir(command_value) {
-        println!("cd: {}: No such file or directory", command_value);
+    let arg = command_value.trim();
+
+    // cd  →  HOME
+    if arg.is_empty() || arg == "~" {
+        match env::var("HOME") {
+            Ok(home) => {
+                if let Err(e) = env::set_current_dir(&home) {
+                    eprintln!("cd: {}: {}", home, e);
+                }
+            }
+            Err(_) => eprintln!("cd: HOME not set"),
+        }
+        return;
+    }
+
+    // cd <path>
+    if let Err(e) = env::set_current_dir(Path::new(arg)) {
+        eprintln!("cd: {}: {}", arg, e);
     }
 }

@@ -77,17 +77,18 @@ fn run_exec(cmd: &str, command_value: &str) {
     match executable_path {
         Ok(path) => {
             let args_list: Vec<&str> = command_value.trim().split_whitespace().collect();
-            Command::new(cmd).args(&args_list);
+            let command_res = Command::new(cmd).args(&args_list).output().unwrap();
             println!(
                 "Program was passed {} args (including program name).\nArg #0 (program name): {}",
                 args_list.len() + 1,
                 cmd
             );
-            let mut  counter = 1;
-            for arg  in args_list {
+            let mut counter = 1;
+            for arg in args_list {
                 println!("Arg #{counter}: {arg}",);
-                counter+=1;
+                counter += 1;
             }
+            println!("{}", String::from_utf8_lossy(&command_res.stdout));
         }
         Err(err) => {
             eprintln!("{}: command not found", cmd);

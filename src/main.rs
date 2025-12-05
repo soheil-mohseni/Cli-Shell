@@ -110,6 +110,7 @@ fn executable_path(exec_name: &str) -> Result<String, &str> {
             if mode & 0o100 != 0 {
                 found = true;
                 last_path = path;
+                break;
             }
         }
     }

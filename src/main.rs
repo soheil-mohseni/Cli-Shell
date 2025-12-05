@@ -78,7 +78,7 @@ fn run_exec(cmd: &str, command_value: &str) {
     match executable_path {
         Ok(path) => {
             let args_list: Vec<&str> = command_value.trim().split_whitespace().collect();
-            let command_res = Command::new(path).args(&args_list).output().unwrap();
+            let command_res = Command::new(cmd).args(&args_list).output().unwrap();
             // println!(
             //     "Program was passed {} args (including program name).\nArg #0 (program name): {}",
             //     args_list.len() + 1,

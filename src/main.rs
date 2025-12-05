@@ -125,6 +125,6 @@ fn pwd_command() {
 fn cd_command(command_value: &str) {
     let path = Path::new(command_value);
     if let Err(error) = env::set_current_dir(command_value) {
-        println!("ERROR: {}", error);
+        println!("cd: {}: No such file or directory", command_value);
     }
 }

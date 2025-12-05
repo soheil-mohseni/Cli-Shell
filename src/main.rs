@@ -72,6 +72,7 @@ fn main() {
     }
 }
 
+
 fn run_exec(cmd: &str, command_value: &str) {
     let executable_path = executable_path(cmd);
     match executable_path {

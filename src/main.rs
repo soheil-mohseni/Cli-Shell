@@ -140,6 +140,6 @@ fn cd_command(command_value: &str) {
 
     // cd <path>
     if let Err(e) = env::set_current_dir(Path::new(arg)) {
-        eprintln!("cd: {}: {}", arg, e);
+        println!("cd: {}: No such file or directory", command_value);
     }
 }

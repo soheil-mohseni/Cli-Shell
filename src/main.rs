@@ -89,7 +89,7 @@ fn run_exec(cmd: &str, command_value: &str) {
             //     println!("Arg #{counter}: {arg}",);
             //     counter += 1;
             // }
-            println!("{}", String::from_utf8_lossy(&command_res.stdout));
+            print!("{}", String::from_utf8_lossy(&command_res.stdout));
         }
         Err(err) => {
             eprintln!("{}: command not found", cmd);

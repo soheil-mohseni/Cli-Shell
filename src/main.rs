@@ -25,9 +25,15 @@ impl Engine {
 
         Self { handlers }
     }
-    fn echo(command: &str) {
-        println!("{}", command);
-    }
+fn echo(command: &str) {
+    let normalized = command
+        .split_whitespace() 
+        .collect::<Vec<_>>() 
+        .join(" ");          
+
+    println!("{}", normalized);
+}
+
     fn type_command(command: &str) {
         let eng = ENGINE.get().unwrap();
         if let Some(_) = eng.handlers.get(command) {
